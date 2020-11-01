@@ -1,49 +1,40 @@
+import { inject, injectable } from 'inversify'
 import { JsonController, Param, Body, Get, Post, Put, Delete, BadRequestError } from 'routing-controllers'
-import ValidationError from './ValidationError'
+import TYPES from '../inversify/inversifyTypes'
+import IUserMainteUsecase from '../usecases/userMainteUsecase'
+import 'reflect-metadata';
+import { User } from '../entities/user'
 
-// モデルの代わりだと思って下さい。サンプル用。
-type User = { name: string; age: number }
-// DBの変わりだと思ってください。サンプル用。
-const users = [{ name: 'hoge', age: 25 }, { name: 'fuga', age: 28 }, { name: 'piyo', age: 27 }]
-
+@injectable()
 @JsonController('/users')
 export class UserController {
   
-  @Get('/')
-  getAll() {
-    return users
+  constructor(@inject(TYPES.IUserMainteUsercase) private usecase: IUserMainteUsecase){
   }
 
-  /**
-   * error()をgetOne()より下に書くと以下エラーが発生する。なんで？ｗ
-   * {"name":"NotFoundError","stack":"Error: \n    at NotFoundError.HttpError [as constructor] (../src/http-error/HttpError.ts:19:22)\n    at new NotFoundError (../src/http-error/NotFoundError.ts:10:9)\n    at ExpressDriver.handleSuccess (../src/driver/express/ExpressDriver.ts:332:23)\n    at ../src/RoutingControllers.ts:160:45\n    at processTicksAndRejections (internal/process/task_queues.js:93:5)"
-   */
-  @Get('/error')
-  error() {
-    throw new ValidationError(`Validation error.`);
+  @Get('/')
+  getAll() {
+    return this.usecase.searchAll();
   }
 
   @Get('/:id')
   getOne(@Param('id') id: number) {
-    return users[id]
+    return this.usecase.searchById(id);
   }
 
   @Post('/')
   post(@Body() user: User) {
-    users.push(user)
-    return 'ok'
+    this.usecase.createUser(user);
   }
 
   @Put('/:id')
   put(@Param('id') id: number, @Body() user: User) {
-    users[id] = user
-    return 'ok'
+    this.usecase.updateUser(user);
   }
 
   @Delete('/:id')
   remove(@Param('id') id: number) {
-    users.splice(id, 1)
-    return 'ok'
+    this.usecase.deleteUser(id);
   }
 
 
