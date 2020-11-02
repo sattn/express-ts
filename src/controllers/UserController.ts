@@ -4,6 +4,7 @@ import TYPES from '../inversify/inversifyTypes'
 import IUserMainteUsecase from '../usecases/userMainteUsecase'
 import 'reflect-metadata';
 import { User } from '../entities/user'
+import { response } from 'express';
 
 @injectable()
 @JsonController('/users')
@@ -13,29 +14,30 @@ export class UserController {
   }
 
   @Get('/')
-  getAll() {
-    return this.usecase.searchAll();
+  async getAll() {
+    return await this.usecase.searchAll();
   }
 
   @Get('/:id')
-  getOne(@Param('id') id: number) {
-    return this.usecase.searchById(id);
+  async getOne(@Param('id') id: number) {
+    return await this.usecase.searchById(id);
   }
 
   @Post('/')
-  post(@Body() user: User) {
-    this.usecase.createUser(user);
+  async post(@Body() user: User) {
+    await this.usecase.createUser(user);
+    return {"result": "ok"}
   }
 
   @Put('/:id')
-  put(@Param('id') id: number, @Body() user: User) {
-    this.usecase.updateUser(user);
+  async put(@Param('id') id: number, @Body() user: User) {
+    await this.usecase.updateUser(user);
+    return {"result": "ok"}
   }
 
   @Delete('/:id')
-  remove(@Param('id') id: number) {
-    this.usecase.deleteUser(id);
+  async delete(@Param('id') id: number) {
+    await this.usecase.deleteUser(id);
+    return {"result": "ok"}
   }
-
-
 }
