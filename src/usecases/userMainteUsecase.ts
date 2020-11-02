@@ -1,9 +1,9 @@
 import { User } from "../entities/user";
 
 export default interface IUserMainteUsecase {
-    searchById(id: number): User | null;
-    searchAll(): User[];
-    createUser(user: User): void;
-    updateUser(user: User): void;
-    deleteUser(id: number): void;
+    searchById(id: number): Promise<User | null>;
+    searchAll(): Promise<User[]>;
+    createUser(user: User): Promise<void>;
+    updateUser(user: User): Promise<void>;
+    deleteUser(id: number): Promise<void>;
 }

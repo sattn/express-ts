@@ -1,9 +1,10 @@
+import UserModel from "../sequelize/user";
 import { User } from "../entities/user";
 
 export default interface IUserRepository {
-    findOne(id: number): User | undefined;
-    findAll(): User[];
-    create(user: User): void;
-    update(user: User): void;
-    delete(id: number): void;
+    findOne(id: number): Promise<UserModel | null>;
+    findAll(): Promise<UserModel[]>;
+    create(user: User): Promise<UserModel>;
+    update(user: User): Promise<[number, UserModel[]]>;
+    delete(id: number): Promise<number>;
 }

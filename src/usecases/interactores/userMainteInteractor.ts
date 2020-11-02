@@ -10,21 +10,36 @@ export default class UserMainteInteractor implements IUserMainteUsecase {
     constructor(@inject(TYPES.IUserRepository) private repo: IUserRepository){
     }
 
-    searchById(id: number): User | null {
-        const user = this.repo.findOne(id);
-        if (user) return user;
-        return null;
+    async searchById(id: number): Promise<User | null> {
+        const user = await this.repo.findOne(id);
+        if (user == null) return null;
+        return {
+            id: user.id,
+            name: user.name,
+            age: user.age
+        }
     }
-    searchAll(): User[] {
-        return this.repo.findAll();
+
+    async searchAll(): Promise<User[]> {
+        const users = await this.repo.findAll();
+        return users.map<User>(user => {
+            return {
+                id: user.id, 
+                name: user.name, 
+                age: user.age
+            }
+        });
     }
-    createUser(user: User): void {
-        this.repo.create(user);
+
+    async createUser(user: User): Promise<void> {
+        await this.repo.create(user);
     }
-    updateUser(user: User): void {
-        this.repo.update(user);
+
+    async updateUser(user: User): Promise<void> {
+        await this.repo.update(user);
     }
-    deleteUser(id: number): void {
-        this.repo.delete(id);
+
+    async deleteUser(id: number): Promise<void> {
+        await this.repo.delete(id);
     }
 }
