@@ -2,14 +2,19 @@ import { injectable } from "inversify";
 import UserModel from "../../sequelize/user";
 import { User } from "../../entities/user";
 import IUserRepository from "../userRepository";
+import 'reflect-metadata';
 
 @injectable()
 export default class UserRepository implements IUserRepository {
 
-    private users: User[] = [{ id: 1, name: 'hoge', age: 25 }, { id: 2, name: 'fuga', age: 28 }, { id: 3, name: 'piyo', age: 27 }];
-
-    async findOne(id: number): Promise<UserModel | null> {
-        return await UserModel.findByPk(id);
+    async findOne(id: number): Promise<User | null> {
+        return await UserModel.findByPk(id).then(res => {
+            return res == null ? null : {
+                id: res.id, 
+                name: res.name, 
+                age: res.age
+            }
+        });
     }
 
     async findAll(): Promise<UserModel[]> {

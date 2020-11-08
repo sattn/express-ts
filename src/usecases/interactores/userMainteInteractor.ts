@@ -3,6 +3,7 @@ import { User } from "../../entities/user";
 import TYPES from "../../inversify/inversifyTypes";
 import IUserRepository from "../../repositories/userRepository";
 import IUserMainteUsecase from "../userMainteUsecase";
+import 'reflect-metadata';
 
 @injectable()
 export default class UserMainteInteractor implements IUserMainteUsecase {
@@ -11,13 +12,7 @@ export default class UserMainteInteractor implements IUserMainteUsecase {
     }
 
     async searchById(id: number): Promise<User | null> {
-        const user = await this.repo.findOne(id);
-        if (user == null) return null;
-        return {
-            id: user.id,
-            name: user.name,
-            age: user.age
-        }
+        return await this.repo.findOne(id);
     }
 
     async searchAll(): Promise<User[]> {
